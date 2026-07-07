@@ -1,0 +1,46 @@
+import { BASE_COLORS } from '@/constants';
+import type { ColorPalette } from '@/types';
+
+export const lightColors: ColorPalette = {
+  primary: BASE_COLORS.primary600,
+  primaryLight: BASE_COLORS.primary400,
+  primaryDark: BASE_COLORS.primary800,
+  secondary: BASE_COLORS.secondary500,
+  background: BASE_COLORS.gray50,
+  surface: BASE_COLORS.white,
+  card: BASE_COLORS.white,
+  text: BASE_COLORS.gray900,
+  textSecondary: BASE_COLORS.gray500,
+  textInverse: BASE_COLORS.white,
+  border: BASE_COLORS.gray200,
+  divider: BASE_COLORS.gray100,
+  error: BASE_COLORS.error,
+  success: BASE_COLORS.success,
+  warning: BASE_COLORS.warning,
+  info: BASE_COLORS.info,
+  overlay: 'rgba(0, 0, 0, 0.5)',
+  disabled: BASE_COLORS.gray300,
+  placeholder: BASE_COLORS.gray400,
+};
+
+export const darkColors: ColorPalette = {
+  primary: BASE_COLORS.primary400,
+  primaryLight: BASE_COLORS.primary300,
+  primaryDark: BASE_COLORS.primary600,
+  secondary: BASE_COLORS.secondary500,
+  background: BASE_COLORS.gray900,
+  surface: BASE_COLORS.gray800,
+  card: BASE_COLORS.gray800,
+  text: BASE_COLORS.gray50,
+  textSecondary: BASE_COLORS.gray400,
+  border: BASE_COLORS.gray700,
+  divider: BASE_COLORS.gray800,
+  error: BASE_COLORS.error,
+  success: BASE_COLORS.success,
+  warning: BASE_COLORS.warning,
+  info: BASE_COLORS.info,
+  overlay: 'rgba(0, 0, 0, 0.7)',
+  disabled: BASE_COLORS.gray600,
+  placeholder: BASE_COLORS.gray500,
+  textInverse: BASE_COLORS.gray900,
+};
