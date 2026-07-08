@@ -6,6 +6,17 @@ export type RootTabParamList = {
   Profile: undefined;
 };
 
+export type AuthStackParamList = {
+  Login: undefined;
+  Signup: undefined;
+};
+
+export type AppStackParamList = {
+  Auth: undefined;
+  FamilySetup: undefined;
+  Dashboard: undefined;
+};
+
 export interface ModuleDetailParams {
   title: string;
   summary: string;
@@ -21,6 +32,6 @@ export type ModuleStackParamList = {
   };
 };
 
-export type RootStackParamList = ModuleStackParamList;
+export type RootStackParamList = AppStackParamList & RootTabParamList & ModuleStackParamList;
 export type ModuleRouteName = Exclude<keyof RootTabParamList, 'Home'>;
 export type RouteName = keyof RootTabParamList;

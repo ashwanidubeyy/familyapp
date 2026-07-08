@@ -20,11 +20,14 @@ export type HealthEntryType = 'medicine' | 'expense' | 'doctorVisit' | 'prescrip
 
 export interface UserProfile {
   id: string;
+  uid: string;
   familyId: string | null;
   name: string;
   email: string;
   phone?: string;
   dob?: string;
+  address?: string;
+  role: 'admin' | 'member';
   relation?: string;
   authProviders: string[];
   pinHash?: string | null;
