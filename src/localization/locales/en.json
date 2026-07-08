@@ -1,0 +1,29 @@
+{
+  "common": {
+    "ok": "OK",
+    "cancel": "Cancel",
+    "save": "Save",
+    "loading": "Loading...",
+    "error": "Something went wrong",
+    "retry": "Retry",
+    "theme": "Theme",
+    "language": "Language"
+  },
+  "home": {
+    "title": "Home",
+    "welcome": "Welcome to FamilyHub",
+    "subtitle": "Your family, connected.",
+    "toggleTheme": "Toggle Theme"
+  },
+  "auth": {
+    "login": "Login",
+    "logout": "Logout",
+    "email": "Email",
+    "password": "Password"
+  },
+  "errors": {
+    "network": "Network error. Please check your connection.",
+    "unauthorized": "Session expired. Please login again.",
+    "server": "Server error. Please try again later."
+  }
+}
