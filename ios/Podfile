@@ -1,26 +1,24 @@
 require Pod::Executable.execute_command('node', ['-p',
   'require.resolve(
     "react-native/scripts/react_native_pods.rb",
-    {paths: [process.argv[1]]},
+    { paths: [process.argv[1]] },
   )', __dir__]).strip
 
-platform :ios, min_ios_version_supported
-
-$RNFirebaseAsStaticFramework = true
-# use_modular_headers!
-
+# 1. First prepare the project so global variables are injected
 prepare_react_native_project!
 
-linkage = ENV['USE_FRAMEWORKS']
-if linkage != nil
-  Pod::UI.puts "Configuring Pod with #{linkage}ally linked Frameworks".green
-  use_frameworks! :linkage => linkage.to_sym
-end
+# 2. Set the platform target using the now-available variable
+platform :ios, min_ios_version_supported
 
+# 3. Workaround for React Native 0.85 prebuilt core issues
+ENV['RCT_USE_PREBUILT_RNCORE'] = '0'
+
+# 4. Use your correct Xcode target name (changed from FamilyHub to FamilyHub)
 target 'FamilyHub' do
-  use_frameworks! :linkage => :static
-
   config = use_native_modules!
+
+  # 5. Enforce global static frameworks required by modern React Native and Firebase
+  use_frameworks! :linkage => :static
 
   use_react_native!(
     :path => config[:reactNativePath],
