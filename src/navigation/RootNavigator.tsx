@@ -1,9 +1,15 @@
-import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-
-import { FamilySetupScreen, LoginScreen, SignupScreen, useAuth } from '@/features/auth';
+import React, { useEffect, useRef, useState } from "react";
+import { NavigationContainer } from "@react-navigation/native";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { AppState } from "react-native";
+import {
+  FamilySetupScreen,
+  LoginScreen,
+  SignupScreen,
+  useAuth,
+} from "@/features/auth";
 import {
   CalendarScreen,
   FamilyScreen,
@@ -11,8 +17,14 @@ import {
   ModuleDetailScreen,
   ProfileScreen,
   VaultScreen,
-} from '@/screens';
-import type { AppStackParamList, AuthStackParamList, ModuleStackParamList, RootTabParamList } from '@/types';
+} from "@/screens";
+import type {
+  AppStackParamList,
+  AuthStackParamList,
+  ModuleStackParamList,
+  RootTabParamList,
+} from "@/types";
+import AppLockScreen from "@/features/auth/screens/AppLockScreen";
 
 const Tab = createBottomTabNavigator<RootTabParamList>();
 const Stack = createNativeStackNavigator<ModuleStackParamList>();
@@ -24,7 +36,10 @@ interface ModuleStackProps {
   title: string;
 }
 
-const createModuleStack = ({ component: Component, title }: ModuleStackProps) => {
+const createModuleStack = ({
+  component: Component,
+  title,
+}: ModuleStackProps) => {
   const ModuleStack: React.FC = () => (
     <Stack.Navigator>
       <Stack.Screen
@@ -43,11 +58,26 @@ const createModuleStack = ({ component: Component, title }: ModuleStackProps) =>
   return ModuleStack;
 };
 
-const HomeStack = createModuleStack({ component: HomeScreen, title: 'GharConnect' });
-const VaultStack = createModuleStack({ component: VaultScreen, title: 'Vault' });
-const FamilyStack = createModuleStack({ component: FamilyScreen, title: 'Family' });
-const CalendarStack = createModuleStack({ component: CalendarScreen, title: 'Calendar' });
-const ProfileStack = createModuleStack({ component: ProfileScreen, title: 'Profile' });
+const HomeStack = createModuleStack({
+  component: HomeScreen,
+  title: "GharConnect",
+});
+const VaultStack = createModuleStack({
+  component: VaultScreen,
+  title: "Vault",
+});
+const FamilyStack = createModuleStack({
+  component: FamilyScreen,
+  title: "Family",
+});
+const CalendarStack = createModuleStack({
+  component: CalendarScreen,
+  title: "Calendar",
+});
+const ProfileStack = createModuleStack({
+  component: ProfileScreen,
+  title: "Profile",
+});
 
 const AuthNavigator: React.FC = () => {
   return (
@@ -76,22 +106,97 @@ const DashboardNavigator: React.FC = () => {
 
 export const RootNavigator: React.FC = () => {
   const { user, initializing } = useAuth();
+  const [skipLock, setSkipLock] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [isUnlocked, setIsUnlocked] = useState(false);
+  const appState = useRef(AppState.currentState);
+
+  useEffect(() => {
+    const initialize = async () => {
+      // User logged out
+      if (!user) {
+        setSkipLock(false);
+        setIsUnlocked(false);
+        setLoading(false);
+        return;
+      }
+
+      setLoading(true);
+
+      try {
+        const value = await AsyncStorage.getItem("JUST_LOGGED_IN");
+
+        if (value === "true") {
+          setSkipLock(true);
+          setIsUnlocked(true); // Don't ask for biometric immediately after login
+          await AsyncStorage.removeItem("JUST_LOGGED_IN");
+        } else {
+          setSkipLock(false);
+          setIsUnlocked(false); // Returning user should see App Lock
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    initialize();
+
+    const subscription = AppState.addEventListener("change", (nextState) => {
+      // App moved to background
+      if (
+        appState.current === "active" &&
+        (nextState === "inactive" || nextState === "background")
+      ) {
+        if (user) {
+          setIsUnlocked(false);
+          setSkipLock(false);
+        }
+      }
+
+      appState.current = nextState;
+    });
+
+    return () => {
+      subscription.remove();
+    };
+  }, [user]);
 
   if (initializing) {
-    return null;
+    return null; // Or a loading spinner
   }
 
   return (
     <NavigationContainer>
-      <RootStack.Navigator screenOptions={{ headerShown: false }}>
-        {!user ? (
-          <RootStack.Screen name="Auth" component={AuthNavigator} />
-        ) : user.familyId && user.status === 'active' ? (
-          <RootStack.Screen name="Dashboard" component={DashboardNavigator} />
-        ) : (
-          <RootStack.Screen name="FamilySetup" component={FamilySetupScreen} />
-        )}
-      </RootStack.Navigator>
-    </NavigationContainer>
+    <RootStack.Navigator screenOptions={{ headerShown: false }}>
+      {!user ? (
+        // Not logged in
+        <RootStack.Screen
+          name="Auth"
+          component={AuthNavigator}
+        />
+      ) : !user.familyId ? (
+        // Logged in but hasn't joined/created a family yet
+        <RootStack.Screen
+          name="FamilySetup"
+          component={FamilySetupScreen}
+        />
+      ) : skipLock || isUnlocked ? (
+        // Logged in + family exists + unlocked
+        <RootStack.Screen
+          name="Dashboard"
+          component={DashboardNavigator}
+        />
+      ) : (
+        // Logged in + family exists + locked
+        <RootStack.Screen name="AppLock">
+          {() => (
+            <AppLockScreen
+              onUnlock={() => setIsUnlocked(true)}
+            />
+          )}
+        </RootStack.Screen>
+      )}
+    </RootStack.Navigator>
+  </NavigationContainer>
   );
 };

@@ -7,6 +7,7 @@ import React, {
   useState,
 } from 'react';
 import auth from '@react-native-firebase/auth';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import type { UserProfile } from '@/domain';
 
@@ -54,6 +55,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         credentials.email,
         credentials.password,
       );
+       await AsyncStorage.setItem("JUST_LOGGED_IN", "true");
       setUser(signedInUser);
     } finally {
       setLoading(false);
@@ -64,6 +66,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setLoading(true);
     try {
       const createdUser = await firebaseAuthRepository.createAccount(payload);
+      await AsyncStorage.setItem("JUST_LOGGED_IN", "true");
       setUser(createdUser);
     } finally {
       setLoading(false);
@@ -137,7 +140,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       joinFamily,
       sendPasswordReset,
       signOut,
-      refreshUser,
+      refreshUser
     }),
     [
       user,
