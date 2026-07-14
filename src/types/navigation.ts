@@ -15,6 +15,7 @@ export type AppStackParamList = {
   Auth: undefined;
   FamilySetup: undefined;
   Dashboard: undefined;
+  AppLock: undefined;
 };
 
 export interface ModuleDetailParams {

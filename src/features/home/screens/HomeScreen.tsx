@@ -1,12 +1,12 @@
-import React, { useMemo } from 'react';
-import { Image, Pressable, View } from 'react-native';
-import { type NavigationProp, useNavigation } from '@react-navigation/native';
+import React, { useMemo } from "react";
+import { Image, Pressable, View } from "react-native";
+import { type NavigationProp, useNavigation } from "@react-navigation/native";
 
-import { Button, Container, ThemedText } from '@/components';
-import { useTheme } from '@/hooks';
-import type { ModuleRouteName, RootStackParamList } from '@/types';
+import { Button, Container, ThemedText } from "@/components";
+import { useTheme } from "@/hooks";
+import type { ModuleRouteName, RootStackParamList } from "@/types";
 
-import { createHomeScreenStyles } from './styles';
+import { createHomeScreenStyles } from "./styles";
 
 const MODULES: Array<{
   route: ModuleRouteName;
@@ -14,24 +14,27 @@ const MODULES: Array<{
   summary: string;
 }> = [
   {
-    route: 'Vault',
-    title: 'Vault',
-    summary: 'Documents, bills, warranties, properties, vehicles, and secure items.',
+    route: "Vault",
+    title: "Vault",
+    summary:
+      "Documents, bills, warranties, properties, vehicles, and secure items.",
   },
   {
-    route: 'Family',
-    title: 'Family',
-    summary: 'Members, join requests, health records, emergency details, and announcements.',
+    route: "Family",
+    title: "Family",
+    summary:
+      "Members, join requests, health records, emergency details, and announcements.",
   },
   {
-    route: 'Calendar',
-    title: 'Calendar',
-    summary: 'Birthdays, appointments, bill due dates, and shared reminders.',
+    route: "Calendar",
+    title: "Calendar",
+    summary: "Birthdays, appointments, bill due dates, and shared reminders.",
   },
   {
-    route: 'Profile',
-    title: 'Profile',
-    summary: 'Account settings, family QR code, security, and notification preferences.',
+    route: "Profile",
+    title: "Profile",
+    summary:
+      "Account settings, family QR code, security, and notification preferences.",
   },
 ];
 
@@ -51,7 +54,7 @@ export const HomeScreen: React.FC = () => {
 
         <View style={styles.attentionCard}>
           <Image
-            source={require('../../../assets/images/logo.png')}
+            source={require("../../../assets/images/logo.png")}
             style={styles.logo}
             accessibilityIgnoresInvertColors
           />
@@ -59,7 +62,8 @@ export const HomeScreen: React.FC = () => {
             GharConnect
           </ThemedText>
           <ThemedText variant="md" color="textSecondary">
-            Attention feed, birthdays, bills, join requests, and reminders land here first.
+            Attention feed, birthdays, bills, join requests, and reminders land
+            here first.
           </ThemedText>
         </View>
 
@@ -67,7 +71,7 @@ export const HomeScreen: React.FC = () => {
           <ThemedText variant="lg" weight="semiBold">
             Modules
           </ThemedText>
-          {MODULES.map(module => (
+          {MODULES.map((module) => (
             <Pressable
               key={module.route}
               accessibilityRole="button"
@@ -88,7 +92,7 @@ export const HomeScreen: React.FC = () => {
         </View>
 
         <Button
-          title={`Theme: ${isDark ? 'Dark' : 'Light'}`}
+          title={`Theme: ${isDark ? "Dark" : "Light"}`}
           onPress={toggleTheme}
         />
       </View>
