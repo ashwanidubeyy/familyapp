@@ -6,6 +6,7 @@ import { initI18n } from '@/localization';
 import { useTheme } from '@/hooks';
 import { RootNavigator } from '@/navigation';
 import { ThemeProvider } from '@/theme';
+import { AuthProvider } from '@/features/auth';
 
 const AppStatusBar: React.FC = () => {
   const { isDark } = useTheme();
@@ -43,7 +44,9 @@ const App: React.FC = () => {
   return (
     <SafeAreaProvider>
       <ThemeProvider>
-        <AppContent />
+        <AuthProvider>
+          <AppContent />
+        </AuthProvider>
       </ThemeProvider>
     </SafeAreaProvider>
   );
