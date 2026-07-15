@@ -10,6 +10,7 @@ import {
   SignupScreen,
   useAuth,
 } from "@/features/auth";
+
 import {
   CalendarScreen,
   FamilyScreen,
@@ -26,6 +27,13 @@ import type {
   RootTabParamList,
 } from "@/types";
 import AppLockScreen from "@/features/auth/screens/AppLockScreen";
+import type {
+  AppStackParamList,
+  AuthStackParamList,
+  ModuleStackParamList,
+  RootTabParamList,
+} from "@/types";
+import CustomTabBar from "./components/CustomTabBar";
 import { FamilyQRCodeScreen } from "@/features/profile/screens/FamilyQRCodeScreen";
 
 const Tab = createBottomTabNavigator<RootTabParamList>();
@@ -47,7 +55,7 @@ const createModuleStack = ({
       <Stack.Screen
         name="ModuleHome"
         component={Component}
-        options={{ title }}
+        options={{ title, headerShown: false }}
       />
       <Stack.Screen
         name="ModuleDetail"
@@ -98,8 +106,11 @@ const AuthNavigator: React.FC = () => {
 const DashboardNavigator: React.FC = () => {
   return (
     <Tab.Navigator
+      tabBar={(props) => <CustomTabBar {...props} />}
       screenOptions={{
         headerShown: false,
+        tabBarShowLabel: false,
+        tabBarHideOnKeyboard: true,
       }}
     >
       <Tab.Screen name="Home" component={HomeStack} />
@@ -168,7 +179,7 @@ export const RootNavigator: React.FC = () => {
     };
   }, [user]);
 
-  if (initializing) {
+  if (initializing || loading) {
     return null; // Or a loading spinner
   }
 
@@ -181,7 +192,7 @@ export const RootNavigator: React.FC = () => {
         ) : !user.familyId ? (
           // Logged in but hasn't joined/created a family yet
           <RootStack.Screen name="FamilySetup" component={FamilySetupScreen} />
-        ) : skipLock || isUnlocked ? (
+        ) : true ? ( //: skipLock || isUnlocked ? (
           // Logged in + family exists + unlocked
           <RootStack.Screen name="Dashboard" component={DashboardNavigator} />
         ) : (

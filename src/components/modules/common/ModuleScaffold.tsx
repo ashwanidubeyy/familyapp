@@ -1,10 +1,20 @@
 import React, { useMemo } from "react";
 import { Pressable, View } from "react-native";
-import { NavigationProp, useNavigation } from "@react-navigation/native";
+import { type NavigationProp, useNavigation } from "@react-navigation/native";
+import {
+  CalendarDays,
+  Search,
+  Shield,
+  User,
+  Users,
+  type LucideIcon,
+} from "lucide-react-native";
 
-import { Container, ThemedText } from "@/components";
+import { AppHeader, GradientPageView, ThemedText } from "@/components";
 import { useTheme } from "@/hooks";
 import type { ModuleStackParamList } from "@/types";
+import { useAuth } from "@/features/auth";
+import { Alert } from "react-native";
 
 import { createModuleScaffoldStyles } from "./styles";
 
@@ -20,6 +30,13 @@ interface ModuleScaffoldProps {
   actions: ModuleAction[];
 }
 
+const MODULE_ICONS: Record<string, LucideIcon> = {
+  Vault: Shield,
+  Family: Users,
+  Calendar: CalendarDays,
+  Profile: User,
+};
+
 export const ModuleScaffold: React.FC<ModuleScaffoldProps> = ({
   title,
   summary,
@@ -28,39 +45,60 @@ export const ModuleScaffold: React.FC<ModuleScaffoldProps> = ({
   const navigation = useNavigation<NavigationProp<ModuleStackParamList>>();
   const { theme } = useTheme();
   const styles = useMemo(() => createModuleScaffoldStyles(theme), [theme]);
+  const HeaderIcon = MODULE_ICONS[title] ?? Shield;
+  const { signOut } = useAuth();
 
-  const handlePress = (action: ModuleAction) => {
-    if (action.onPress) {
-      action.onPress();
-      return;
-    }
-
-    navigation.navigate("ModuleDetail", {
-      title: action.title,
-      summary: action.summary,
-      parentTitle: title,
-    });
+  const handleLogout = () => {
+    Alert.alert("Logout", "Are you sure you want to logout?", [
+      {
+        text: "Cancel",
+        style: "cancel",
+      },
+      {
+        text: "Logout",
+        style: "destructive",
+        onPress: async () => {
+          try {
+            await signOut();
+          } catch (error) {
+            console.log("Logout Error:", error);
+          }
+        },
+      },
+    ]);
   };
 
   return (
-    <Container>
+    <GradientPageView scroll>
       <View style={styles.content}>
-        <View style={styles.header}>
-          <ThemedText variant="xxl" weight="bold">
-            {title}
-          </ThemedText>
-
-          <ThemedText variant="md" color="textSecondary">
-            {summary}
-          </ThemedText>
-        </View>
+        <AppHeader
+          title={title}
+          subtitle={summary}
+          leftIcon={HeaderIcon}
+          actions={[
+            {
+              icon: Search,
+              accessibilityLabel: `Search ${title}`,
+            },
+          ]}
+        />
 
         <View style={styles.list}>
           {actions.map((action) => (
             <Pressable
               key={action.title}
               accessibilityRole="button"
-              onPress={() => handlePress(action)}
+              onPress={() => {
+                if (action.title === "Security and logout") {
+                  handleLogout();
+                  return;
+                }
+                navigation.navigate("ModuleDetail", {
+                  title: action.title,
+                  summary: action.summary,
+                  parentTitle: title,
+                });
+              }}
               style={({ pressed }) => [
                 styles.row,
                 pressed && styles.rowPressed,
@@ -77,6 +115,6 @@ export const ModuleScaffold: React.FC<ModuleScaffoldProps> = ({
           ))}
         </View>
       </View>
-    </Container>
+    </GradientPageView>
   );
 };

@@ -13,7 +13,7 @@ export const BASE_COLORS = {
   primary300: '#A5B4FC',
   primary400: '#818CF8',
   primary500: '#6366F1',
-  primary600: '#4F46E5',
+  primary600: '#B87D55',
   primary700: '#4338CA',
   primary800: '#3730A3',
   primary900: '#312E81',

@@ -8,22 +8,24 @@ export const createModuleScaffoldStyles = (theme: Theme) =>
       flex: 1,
       gap: theme.spacing.md,
     },
-    header: {
-      gap: theme.spacing.xs,
-      paddingBottom: theme.spacing.sm,
-      borderBottomWidth: StyleSheet.hairlineWidth,
-      borderBottomColor: theme.colors.divider,
-    },
     list: {
       gap: theme.spacing.sm,
     },
     row: {
       gap: theme.spacing.xs,
-      padding: theme.spacing.md,
-      borderRadius: theme.borderRadius.md,
+      padding: theme.spacing.lg,
+      borderRadius: theme.borderRadius.lg,
       backgroundColor: theme.colors.card,
       borderWidth: StyleSheet.hairlineWidth,
       borderColor: theme.colors.border,
+      shadowColor: '#64748B',
+      shadowOffset: {
+        width: 0,
+        height: 8,
+      },
+      shadowOpacity: 0.08,
+      shadowRadius: 14,
+      elevation: 2,
     },
     rowPressed: {
       opacity: 0.72,
