@@ -27,12 +27,6 @@ import type {
   RootTabParamList,
 } from "@/types";
 import AppLockScreen from "@/features/auth/screens/AppLockScreen";
-import type {
-  AppStackParamList,
-  AuthStackParamList,
-  ModuleStackParamList,
-  RootTabParamList,
-} from "@/types";
 import CustomTabBar from "./components/CustomTabBar";
 import { FamilyQRCodeScreen } from "@/features/profile/screens/FamilyQRCodeScreen";
 
