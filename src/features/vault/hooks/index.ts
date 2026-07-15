@@ -1,0 +1,1 @@
+export { useVaultModule } from './useVaultModule';
