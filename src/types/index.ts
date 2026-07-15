@@ -18,6 +18,8 @@ export type {
   HttpMethod,
 } from './api';
 export type {
+  AppStackParamList,
+  AuthStackParamList,
   ModuleDetailParams,
   ModuleRouteName,
   ModuleStackParamList,

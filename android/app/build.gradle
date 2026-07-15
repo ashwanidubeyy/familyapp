@@ -118,6 +118,9 @@ dependencies {
     // Firebase Analytics (optional but recommended)
     implementation("com.google.firebase:firebase-analytics")
 
+    // Biometric Auth
+    implementation "androidx.biometric:biometric:1.2.0-alpha05"
+
     if (hermesEnabled.toBoolean()) {
         implementation("com.facebook.react:hermes-android")
     } else {

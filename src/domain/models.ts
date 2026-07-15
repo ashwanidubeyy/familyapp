@@ -1,30 +1,37 @@
-export type JoinRequestStatus = 'pending' | 'approved' | 'declined';
-export type UserStatus = 'active' | 'pendingFamily' | 'declined';
-export type MemberStatus = 'pending' | 'approved' | 'declined';
-export type OwnerType = 'member' | 'dependent';
+export type JoinRequestStatus = "pending" | "approved" | "declined";
+export type UserStatus = "active" | "pendingFamily" | "declined";
+export type MemberStatus = "pending" | "approved" | "declined";
+export type OwnerType = "member" | "dependent";
 
-export type VaultVisibility = 'private' | 'public';
+export type VaultVisibility = "private" | "public";
 
 export type VaultItemType =
-  | 'document'
-  | 'property'
-  | 'finance'
-  | 'secure'
-  | 'password'
-  | 'vehicle'
-  | 'health'
-  | 'pet';
+  | "document"
+  | "property"
+  | "finance"
+  | "secure"
+  | "password"
+  | "vehicle"
+  | "health"
+  | "pet";
 
-export type ReminderSourceType = 'vaultItem' | 'familyMember' | 'manual';
-export type HealthEntryType = 'medicine' | 'expense' | 'doctorVisit' | 'prescriptionDoc';
+export type ReminderSourceType = "vaultItem" | "familyMember" | "manual";
+export type HealthEntryType =
+  | "medicine"
+  | "expense"
+  | "doctorVisit"
+  | "prescriptionDoc";
 
 export interface UserProfile {
   id: string;
+  uid: string;
   familyId: string | null;
   name: string;
   email: string;
   phone?: string;
   dob?: string;
+  address?: string;
+  role: "admin" | "member";
   relation?: string;
   authProviders: string[];
   pinHash?: string | null;
@@ -33,6 +40,7 @@ export interface UserProfile {
   status: UserStatus;
   createdAt: string;
   updatedAt: string;
+  inviteCode?: string;
 }
 
 export interface Family {
@@ -124,7 +132,7 @@ export interface Reminder {
   sourceId?: string;
   title: string;
   dueDate: string;
-  recurrence?: 'none' | 'daily' | 'weekly' | 'monthly' | 'yearly';
+  recurrence?: "none" | "daily" | "weekly" | "monthly" | "yearly";
   notified: boolean;
   createdAt: string;
   updatedAt: string;
