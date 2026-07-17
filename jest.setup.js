@@ -1,3 +1,56 @@
+jest.mock('react-native-reanimated', () => {
+  const { View } = require('react-native');
+
+  const interpolate = (value, inputRange, outputRange) => {
+    if (value <= inputRange[0]) {
+      return outputRange[0];
+    }
+
+    if (value >= inputRange[inputRange.length - 1]) {
+      return outputRange[outputRange.length - 1];
+    }
+
+    return outputRange[1] ?? outputRange[0];
+  };
+
+  const Animated = {
+    View,
+    createAnimatedComponent: component => component,
+  };
+
+  return {
+    __esModule: true,
+    default: Animated,
+    interpolate,
+    useAnimatedProps: updater => updater(),
+    useAnimatedStyle: updater => updater(),
+    useSharedValue: value => ({ value }),
+    withSpring: value => value,
+  };
+});
+
+jest.mock('lucide-react-native', () => {
+  const React = require('react');
+  const { View } = require('react-native');
+
+  const Icon = props => React.createElement(View, props);
+
+  return new Proxy(
+    {
+      __esModule: true,
+    },
+    {
+      get: (target, property) => {
+        if (property === '__esModule') {
+          return target.__esModule;
+        }
+
+        return Icon;
+      },
+    },
+  );
+});
+
 jest.mock('@react-native-async-storage/async-storage', () => ({
   __esModule: true,
   default: {

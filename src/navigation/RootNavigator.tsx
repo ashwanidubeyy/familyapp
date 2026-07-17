@@ -10,6 +10,7 @@ import {
   SignupScreen,
   useAuth,
 } from "@/features/auth";
+
 import {
   CalendarScreen,
   FamilyScreen,
@@ -27,6 +28,7 @@ import type {
 } from "@/types";
 import AppLockScreen from "@/features/auth/screens/AppLockScreen";
 import { FamilyQRCodeScreen } from "@/features/profile/screens/FamilyQRCodeScreen";
+import CustomTabBar from "./components/CustomTabBar";
 
 const Tab = createBottomTabNavigator<RootTabParamList>();
 const Stack = createNativeStackNavigator<ModuleStackParamList>();
@@ -47,7 +49,7 @@ const createModuleStack = ({
       <Stack.Screen
         name="ModuleHome"
         component={Component}
-        options={{ title }}
+        options={{ title, headerShown: false }}
       />
       <Stack.Screen
         name="ModuleDetail"
@@ -98,8 +100,11 @@ const AuthNavigator: React.FC = () => {
 const DashboardNavigator: React.FC = () => {
   return (
     <Tab.Navigator
+      tabBar={props => <CustomTabBar {...props} />}
       screenOptions={{
         headerShown: false,
+        tabBarShowLabel: false,
+        tabBarHideOnKeyboard: true,
       }}
     >
       <Tab.Screen name="Home" component={HomeStack} />
@@ -168,7 +173,7 @@ export const RootNavigator: React.FC = () => {
     };
   }, [user]);
 
-  if (initializing) {
+  if (initializing || loading) {
     return null; // Or a loading spinner
   }
 

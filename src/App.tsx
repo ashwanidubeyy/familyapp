@@ -7,6 +7,7 @@ import { useTheme } from '@/hooks';
 import { RootNavigator } from '@/navigation';
 import { ThemeProvider } from '@/theme';
 import { AuthProvider } from '@/features/auth';
+import 'react-native-url-polyfill/auto'
 
 const AppStatusBar: React.FC = () => {
   const { isDark } = useTheme();

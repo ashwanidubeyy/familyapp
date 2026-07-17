@@ -1,8 +1,9 @@
 import React, { useMemo } from "react";
 import { Image, Pressable, View } from "react-native";
 import { type NavigationProp, useNavigation } from "@react-navigation/native";
+import { Bell, User, Mic, Search } from "lucide-react-native";
 
-import { Button, Container, ThemedText } from "@/components";
+import { AppHeader, Button, GradientPageView, ThemedText } from "@/components";
 import { useTheme } from "@/hooks";
 import type { ModuleRouteName, RootStackParamList } from "@/types";
 
@@ -44,12 +45,29 @@ export const HomeScreen: React.FC = () => {
   const styles = useMemo(() => createHomeScreenStyles(theme), [theme]);
 
   return (
-    <Container>
+    <GradientPageView scroll>
       <View style={styles.content}>
+        <AppHeader
+          eyebrow="Hello, John Smith"
+          title="Good Morning!"
+          leftIcon={User}
+          actions={[
+            {
+              icon: Bell,
+              accessibilityLabel: "Notifications",
+              badgeCount: 3,
+            },
+          ]}
+        />
+
         <View style={styles.search}>
+          <Search size={22} color={theme.colors.textSecondary} strokeWidth={2.3} />
           <ThemedText variant="md" color="textSecondary">
             Search documents, reminders, members, or use voice
           </ThemedText>
+          <View style={styles.micButton}>
+            <Mic size={22} color={theme.colors.primary} strokeWidth={2.4} />
+          </View>
         </View>
 
         <View style={styles.attentionCard}>
@@ -96,6 +114,6 @@ export const HomeScreen: React.FC = () => {
           onPress={toggleTheme}
         />
       </View>
-    </Container>
+    </GradientPageView>
   );
 };
