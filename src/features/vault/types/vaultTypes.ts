@@ -38,7 +38,7 @@ export interface VaultDocument {
   createdBy: string;
   createdAt: string;
   updatedAt: string;
-  icon:string;
+  icon?:string;
 }
 
 export type BillStatus = 'pending' | 'partial' | 'paid' | 'overdue';

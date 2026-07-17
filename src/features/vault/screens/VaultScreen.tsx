@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Alert, Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import {
   Camera,
   FileUp,
@@ -9,7 +9,11 @@ import {
   Shield,
   UserCircle,
 } from 'lucide-react-native';
-
+import {
+  launchCamera,
+  launchImageLibrary,
+} from 'react-native-image-picker';
+import DocumentPicker from 'react-native-document-picker';
 import { AppHeader, GradientPageView } from '@/components';
 import { useTheme } from '@/hooks';
 import type { Theme } from '@/types';
@@ -28,6 +32,9 @@ import {
 } from '../components';
 import { useVaultModule } from '../hooks';
 import type { MasterDataOption } from '../types';
+import { getImagekitUrl } from '../services/imageKitService';
+import { uploadImage } from '../services/uploadservice';
+import { saveImageToFirestore } from '../services/firestoreService';
 
 const CREATE_ACTIONS = [
   {
@@ -64,12 +71,65 @@ export const VaultScreen: React.FC = () => {
     () => getCountsByCategory(staticData.documents),
     [staticData.documents],
   );
+
   const maintenanceCounts = useMemo(
     () => getCountsByCategory(staticData.maintenance),
     [staticData.maintenance],
   );
 
+  const handleAction = async (id: string) => {
+    switch (id) {
+      case 'upload-image':
+        const image = await launchImageLibrary({
+          mediaType: 'photo',
+        });
+        const asset = image.assets?.[0];
+
+        if (!asset) {
+          return;
+        }
+  
+        try {
+          const result: any = await uploadImage(asset);
+          console.log("ImageKit Result:", result);
+          // Save in Firebase
+          await saveImageToFirestore(result);
+          Alert.alert("Success", "Image uploaded successfully");
+        } catch (error) {
+          console.log(error);
+          Alert.alert("Error", "Upload failed");
+        }
+      
+        break;
+  
+      case 'capture':
+        const camera = await launchCamera({
+          mediaType: 'photo',
+        });
+  
+        console.log(camera.assets?.[0]);
+        break;
+  
+      case 'upload-pdf':
+        try {
+          const file = await DocumentPicker.pickSingle({
+            type: [DocumentPicker.types.pdf],
+          });
+      
+          console.log(file);
+        } catch (err) {
+          if (DocumentPicker.isCancel(err)) {
+            console.log('User cancelled');
+          } else {
+            console.error(err);
+          }
+        }
+        break;
+    }
+  };
+
   return (
+    <View style={{ flex: 1 }}>
     <GradientPageView scroll>
       <View style={styles.content}>
         <AppHeader
@@ -101,6 +161,7 @@ export const VaultScreen: React.FC = () => {
                   styles.createAction,
                   pressed && styles.createActionPressed,
                 ]}
+                onPress={() => handleAction(action?.id)}
               >
                 <Icon size={19} color={theme.colors.primary} strokeWidth={2.4} />
                 <Text style={styles.createActionText}>{action.title}</Text>
@@ -108,12 +169,24 @@ export const VaultScreen: React.FC = () => {
             );
           })}
         </View>
-
-        {error ? (
-          <View style={styles.errorCard}>
-            <Text style={styles.errorText}>{error}</Text>
-          </View>
-        ) : null}
+        <Image
+  source={{
+    uri: getImagekitUrl(
+      'https://ik.imagekit.io/okhxbviyq/photos/Simulator%20Screenshot%20-%20iPhone%2017%20Pro%20-%202026-07-14%20at%2017.12.06.png',
+      [
+        {
+          width: 250,
+          height: 250,
+          crop: 'maintain_ratio',
+        },
+      ],
+    ),
+  }}
+  style={{
+    width: 250,
+    height: 250,
+  }}
+/>
 
         <VaultSection title="Documents" onViewAll={() => undefined}>
           {loadingMasterData ? (
@@ -169,16 +242,16 @@ export const VaultScreen: React.FC = () => {
             )}
           </View>
         </VaultSection>
-
-        <Pressable
+      </View>
+    </GradientPageView>
+    <Pressable
           accessibilityRole="button"
           accessibilityLabel="Create vault item"
           style={styles.fab}
         >
           <Plus size={30} color="#FFFFFF" strokeWidth={2.6} />
         </Pressable>
-      </View>
-    </GradientPageView>
+    </View>
   );
 };
 
@@ -284,8 +357,8 @@ const createStyles = (theme: Theme) =>
     },
     fab: {
       position: 'absolute',
-      right: theme.spacing.sm,
-      bottom: 24,
+      right: 20,
+      bottom: 100,
       width: 64,
       height: 64,
       borderRadius: 32,
@@ -300,5 +373,6 @@ const createStyles = (theme: Theme) =>
       shadowOpacity: 0.28,
       shadowRadius: 14,
       elevation: 10,
+      zIndex: 999,
     },
   });
