@@ -16,11 +16,12 @@ import type { ModuleStackParamList } from '@/types';
 import { useAuth } from '@/features/auth';
 import { Alert } from 'react-native';
 
-import { createModuleScaffoldStyles } from './styles';
+import { createModuleScaffoldStyles } from "./styles";
 
 export interface ModuleAction {
   title: string;
   summary: string;
+  onPress?: () => void;
 }
 
 interface ModuleScaffoldProps {
@@ -68,6 +69,19 @@ export const ModuleScaffold: React.FC<ModuleScaffoldProps> = ({ title, summary, 
     );
   };
 
+  const handlePress = (action: ModuleAction) => {
+    if (action.onPress) {
+      action.onPress();
+      return;
+    }
+
+    navigation.navigate("ModuleDetail", {
+      title: action.title,
+      summary: action.summary,
+      parentTitle: title,
+    });
+  };
+
   return (
     <GradientPageView scroll>
       <View style={styles.content}>
@@ -84,7 +98,7 @@ export const ModuleScaffold: React.FC<ModuleScaffoldProps> = ({ title, summary, 
         />
 
         <View style={styles.list}>
-          {actions.map(action => (
+          {actions.map((action) => (
             <Pressable
               key={action.title}
               accessibilityRole="button"
@@ -107,6 +121,7 @@ export const ModuleScaffold: React.FC<ModuleScaffoldProps> = ({ title, summary, 
               <ThemedText variant="md" weight="medium">
                 {action.title}
               </ThemedText>
+
               <ThemedText variant="sm" color="textSecondary">
                 {action.summary}
               </ThemedText>

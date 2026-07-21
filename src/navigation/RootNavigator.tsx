@@ -32,6 +32,7 @@ import {
 } from "@/screens";
 import AppLockScreen from "@/features/auth/screens/AppLockScreen";
 import type { AppStackParamList, AuthStackParamList, ModuleStackParamList, RootTabParamList, VaultStackParamList } from '@/types';
+import { FamilyQRCodeScreen } from "@/features/profile/screens/FamilyQRCodeScreen";
 import CustomTabBar from "./components/CustomTabBar";
 
 const Tab = createBottomTabNavigator<RootTabParamList>();
@@ -60,6 +61,11 @@ const createModuleStack = ({
         name="ModuleDetail"
         component={ModuleDetailScreen}
         options={({ route }) => ({ title: route.params.title })}
+      />
+      <Stack.Screen
+        name="FamilyQRCode"
+        component={FamilyQRCodeScreen}
+        options={{ title: "Family QR Code" }}
       />
     </Stack.Navigator>
   );
@@ -194,36 +200,23 @@ export const RootNavigator: React.FC = () => {
 
   return (
     <NavigationContainer>
-    <RootStack.Navigator screenOptions={{ headerShown: false }}>
-      {!user ? (
-        // Not logged in
-        <RootStack.Screen
-          name="Auth"
-          component={AuthNavigator}
-        />
-      ) : !user.familyId ? (
-        // Logged in but hasn't joined/created a family yet
-        <RootStack.Screen
-          name="FamilySetup"
-          component={FamilySetupScreen}
-        />
-      ) : true ? (//: skipLock || isUnlocked ? (
-        // Logged in + family exists + unlocked
-        <RootStack.Screen
-          name="Dashboard"
-          component={DashboardNavigator}
-        />
-      ) : (
-        // Logged in + family exists + locked
-        <RootStack.Screen name="AppLock">
-          {() => (
-            <AppLockScreen
-              onUnlock={() => setIsUnlocked(true)}
-            />
-          )}
-        </RootStack.Screen>
-      )}
-    </RootStack.Navigator>
-  </NavigationContainer>
+      <RootStack.Navigator screenOptions={{ headerShown: false }}>
+        {!user ? (
+          // Not logged in
+          <RootStack.Screen name="Auth" component={AuthNavigator} />
+        ) : !user.familyId ? (
+          // Logged in but hasn't joined/created a family yet
+          <RootStack.Screen name="FamilySetup" component={FamilySetupScreen} />
+        ) : skipLock || isUnlocked ? (
+          // Logged in + family exists + unlocked
+          <RootStack.Screen name="Dashboard" component={DashboardNavigator} />
+        ) : (
+          // Logged in + family exists + locked
+          <RootStack.Screen name="AppLock">
+            {() => <AppLockScreen onUnlock={() => setIsUnlocked(true)} />}
+          </RootStack.Screen>
+        )}
+      </RootStack.Navigator>
+    </NavigationContainer>
   );
 };

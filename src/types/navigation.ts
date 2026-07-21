@@ -41,13 +41,23 @@ export interface ModuleDetailParams {
 
 export type ModuleStackParamList = {
   ModuleHome: undefined;
+
   ModuleDetail: {
     title: string;
     summary: string;
     parentTitle: string;
   };
+
+  FamilyQRCode: {
+    familyName: string;
+    inviteCode: string;
+    size: number;
+  };
 };
 
-export type RootStackParamList = AppStackParamList & RootTabParamList & ModuleStackParamList;
-export type ModuleRouteName = Exclude<keyof RootTabParamList, 'Home'>;
+export type RootStackParamList = AppStackParamList &
+  RootTabParamList &
+  ModuleStackParamList;
+
+export type ModuleRouteName = Exclude<keyof RootTabParamList, "Home">;
 export type RouteName = keyof RootTabParamList;
