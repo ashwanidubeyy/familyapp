@@ -6,4 +6,4 @@ export const publicKey =
 
 // Leave empty until you deploy your Firebase Function
 export const authenticationEndpoint =
-  'https://github.com/ashwanidubeyy/familyapp';
+  'https://familyapp-v68w.onrender.com/auth';

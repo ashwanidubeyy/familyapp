@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import type { VaultVisibility } from '@/domain';
 import { useAuth } from '@/features/auth';
@@ -7,7 +7,6 @@ import { vaultStaticData } from '../data/vaultStaticData';
 import { masterDataService } from '../services/masterDataService';
 import type {
   MasterDataOption,
-  VaultDocument,
 } from '../types';
 
 interface VaultMasterData {
@@ -23,7 +22,6 @@ interface UseVaultModuleResult {
   masterData: VaultMasterData;
   loadingMasterData: boolean;
   error: string | null;
-  documents: VaultDocument[];
   staticData: typeof vaultStaticData;
   ownerId: string;
   familyId: string | null;
@@ -89,23 +87,12 @@ export const useVaultModule = (): UseVaultModuleResult => {
     };
   }, []);
 
-  const documents = useMemo(() => {
-    return vaultStaticData.documents.filter(document => {
-      if (visibility === 'private') {
-        return document.visibility === 'private';
-      }
-
-      return document.visibility === 'public';
-    });
-  }, [visibility]);
-
   return {
     visibility,
     setVisibility,
     masterData,
     loadingMasterData,
     error,
-    documents,
     staticData: vaultStaticData,
     ownerId,
     familyId,

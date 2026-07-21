@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { Copy, KeyRound, Lock, WandSparkles } from 'lucide-react-native';
 
 import { useTheme } from '@/hooks';
@@ -7,16 +7,18 @@ import type { Theme } from '@/types';
 
 interface PasswordManagerCardProps {
   count: number;
+  onPress?: () => void;
 }
 
 export const PasswordManagerCard: React.FC<PasswordManagerCardProps> = ({
   count,
+  onPress,
 }) => {
   const { theme } = useTheme();
   const styles = useMemo(() => createStyles(theme), [theme]);
 
   return (
-    <View style={styles.card}>
+    <Pressable accessibilityRole="button" onPress={onPress} style={styles.card}>
       <View style={styles.leading}>
         <View style={styles.iconWrap}>
           <Lock size={24} color={theme.colors.success} strokeWidth={2.6} />
@@ -31,7 +33,7 @@ export const PasswordManagerCard: React.FC<PasswordManagerCardProps> = ({
         <WandSparkles size={20} color={theme.colors.primary} strokeWidth={2.3} />
         <KeyRound size={20} color={theme.colors.success} strokeWidth={2.3} />
       </View>
-    </View>
+    </Pressable>
   );
 };
 

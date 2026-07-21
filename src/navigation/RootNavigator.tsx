@@ -12,21 +12,33 @@ import {
 } from "@/features/auth";
 
 import {
+  AddDocumentScreen,
+  AddPasswordScreen,
+  AddTransactionScreen,
   CalendarScreen,
+  DocumentDetailsScreen,
+  DocumentListScreen,
   FamilyScreen,
+  FinanceDashboardScreen,
   HomeScreen,
+  MaintenanceDetailsScreen,
+  MaintenanceListScreen,
   ModuleDetailScreen,
+  PasswordDetailsScreen,
+  PasswordListScreen,
   ProfileScreen,
+  TransactionDetailsScreen,
   VaultScreen,
 } from "@/screens";
 import AppLockScreen from "@/features/auth/screens/AppLockScreen";
-import type { AppStackParamList, AuthStackParamList, ModuleStackParamList, RootTabParamList } from '@/types';
+import type { AppStackParamList, AuthStackParamList, ModuleStackParamList, RootTabParamList, VaultStackParamList } from '@/types';
 import CustomTabBar from "./components/CustomTabBar";
 
 const Tab = createBottomTabNavigator<RootTabParamList>();
 const Stack = createNativeStackNavigator<ModuleStackParamList>();
 const RootStack = createNativeStackNavigator<AppStackParamList>();
 const AuthStack = createNativeStackNavigator<AuthStackParamList>();
+const VaultNativeStack = createNativeStackNavigator<VaultStackParamList>();
 
 interface ModuleStackProps {
   component: React.ComponentType;
@@ -59,10 +71,6 @@ const HomeStack = createModuleStack({
   component: HomeScreen,
   title: "GharConnect",
 });
-const VaultStack = createModuleStack({
-  component: VaultScreen,
-  title: "Vault",
-});
 const FamilyStack = createModuleStack({
   component: FamilyScreen,
   title: "Family",
@@ -85,6 +93,25 @@ const AuthNavigator: React.FC = () => {
   );
 };
 
+const VaultNavigator: React.FC = () => {
+  return (
+    <VaultNativeStack.Navigator screenOptions={{ headerShown: false }}>
+      <VaultNativeStack.Screen name="VaultHome" component={VaultScreen} />
+      <VaultNativeStack.Screen name="DocumentList" component={DocumentListScreen} />
+      <VaultNativeStack.Screen name="DocumentDetails" component={DocumentDetailsScreen} />
+      <VaultNativeStack.Screen name="PasswordList" component={PasswordListScreen} />
+      <VaultNativeStack.Screen name="PasswordDetails" component={PasswordDetailsScreen} />
+      <VaultNativeStack.Screen name="FinanceDashboard" component={FinanceDashboardScreen} />
+      <VaultNativeStack.Screen name="TransactionDetails" component={TransactionDetailsScreen} />
+      <VaultNativeStack.Screen name="MaintenanceList" component={MaintenanceListScreen} />
+      <VaultNativeStack.Screen name="MaintenanceDetails" component={MaintenanceDetailsScreen} />
+      <VaultNativeStack.Screen name="AddDocument" component={AddDocumentScreen} />
+      <VaultNativeStack.Screen name="AddPassword" component={AddPasswordScreen} />
+      <VaultNativeStack.Screen name="AddTransaction" component={AddTransactionScreen} />
+    </VaultNativeStack.Navigator>
+  );
+};
+
 const DashboardNavigator: React.FC = () => {
   return (
     <Tab.Navigator
@@ -96,7 +123,7 @@ const DashboardNavigator: React.FC = () => {
       }}
     >
       <Tab.Screen name="Home" component={HomeStack} />
-      <Tab.Screen name="Vault" component={VaultStack} />
+      <Tab.Screen name="Vault" component={VaultNavigator} />
       <Tab.Screen name="Family" component={FamilyStack} />
       <Tab.Screen name="Calendar" component={CalendarStack} />
       <Tab.Screen name="Profile" component={ProfileStack} />

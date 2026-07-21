@@ -23,22 +23,32 @@ export interface MasterDataOption {
 
 export interface VaultDocument {
   id: string;
+  name?: string;
   title: string;
   description: string;
+  category?: string;
   categoryId: string;
   categoryName: string;
   ownerId: string;
   familyId: string | null;
   visibility: VaultVisibility;
+  vaultType?: VaultVisibility;
   propertyId?: string | null;
+  assetId?: string | null;
   expiryDate?: string | null;
   reminderDate?: string | null;
+  reminder?: string | null;
   fileUrl?: string | null;
+  url?: string | null;
+  fileId?: string | null;
+  fileType?: string | null;
+  size?: number | string | null;
   thumbnail?: string | null;
   createdBy: string;
   createdAt: string;
   updatedAt: string;
   icon?:string;
+  tags?: string[];
 }
 
 export type BillStatus = 'pending' | 'partial' | 'paid' | 'overdue';
@@ -77,13 +87,42 @@ export interface MaintenanceRecord {
 
 export interface PasswordRecord {
   id: string;
+  title?: string;
   website: string;
   username: string;
   password: string;
   notes?: string;
   categoryId: string;
   categoryName: string;
+  visibility?: VaultVisibility;
   updatedAt: string;
+  createdAt?: string;
+}
+
+export type TransactionType = 'income' | 'expense';
+
+export interface VaultTransaction {
+  id: string;
+  type: TransactionType;
+  amount: number;
+  categoryId: string;
+  categoryName: string;
+  date: string;
+  paymentMethod?: string;
+  property?: string;
+  description?: string;
+  attachmentUrl?: string | null;
+  recurring: boolean;
+  reminder?: string | null;
+  visibility: VaultVisibility;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface MaintenanceAppliance {
+  id: string;
+  name: string;
+  icon: string;
 }
 
 export interface VaultFinanceSummary {
@@ -98,6 +137,7 @@ export interface VaultStaticData {
   maintenance: MaintenanceRecord[];
   passwords: PasswordRecord[];
   financeActions: VaultQuickAction[];
+  maintenanceAppliances: MaintenanceAppliance[];
   financeSummary: VaultFinanceSummary;
   storageUsedGb: number;
   storageLimitGb: number;
@@ -135,6 +175,7 @@ export interface UploadTarget {
 
 export interface UploadFileInput extends UploadTarget {
   localUri: string;
+  fileType?: string | null;
   contentType?: string;
 }
 

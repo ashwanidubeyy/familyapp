@@ -10,6 +10,8 @@ import { getVaultIcon } from './vaultIconMap';
 
 interface DocumentListItemProps {
   document: VaultDocument;
+  onPress?: () => void;
+  onMenuPress?: () => void;
 }
 
 const formatDate = (date: string): string => {
@@ -21,13 +23,15 @@ const formatDate = (date: string): string => {
 
 export const DocumentListItem: React.FC<DocumentListItemProps> = ({
   document,
+  onPress,
+  onMenuPress,
 }) => {
   const { theme } = useTheme();
   const styles = useMemo(() => createStyles(theme), [theme]);
   const Icon =  getVaultIcon(document.icon === 'Insurance' ? 'Shield' : 'FileText');
 
   return (
-    <Pressable accessibilityRole="button" style={styles.row}>
+    <Pressable accessibilityRole="button" onPress={onPress} style={styles.row}>
       <View style={styles.iconWrap}>
         <Icon size={24} color={theme.colors.primary} strokeWidth={2.4} />
       </View>
@@ -37,7 +41,14 @@ export const DocumentListItem: React.FC<DocumentListItemProps> = ({
           PDF · 2.4 MB · {formatDate(document.createdAt)}
         </Text>
       </View>
-      <MoreHorizontal size={22} color={theme.colors.textSecondary} strokeWidth={2.4} />
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel={`More options for ${document.title}`}
+        onPress={onMenuPress}
+        style={styles.menuButton}
+      >
+        <MoreHorizontal size={22} color={theme.colors.textSecondary} strokeWidth={2.4} />
+      </Pressable>
     </Pressable>
   );
 };
@@ -77,5 +88,12 @@ const createStyles = (theme: Theme) =>
       fontFamily: theme.typography.fontFamily.medium,
       fontSize: theme.typography.fontSize.sm,
       marginTop: 3,
+    },
+    menuButton: {
+      width: 36,
+      height: 36,
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderRadius: 18,
     },
   });

@@ -18,6 +18,21 @@ export type AppStackParamList = {
   AppLock: undefined;
 };
 
+export type VaultStackParamList = {
+  VaultHome: undefined;
+  DocumentList: { categoryId: string; categoryName: string };
+  DocumentDetails: { documentId: string; source: 'private' | 'public' };
+  PasswordList: undefined;
+  PasswordDetails: { passwordId: string; source: 'private' | 'public' };
+  FinanceDashboard: undefined;
+  TransactionDetails: { transactionId: string; source: 'private' | 'public' };
+  MaintenanceList: { categoryId?: string; categoryName?: string };
+  MaintenanceDetails: { applianceId: string; applianceName: string };
+  AddDocument: { categoryId?: string; categoryName?: string } | undefined;
+  AddPassword: undefined;
+  AddTransaction: undefined;
+};
+
 export interface ModuleDetailParams {
   title: string;
   summary: string;

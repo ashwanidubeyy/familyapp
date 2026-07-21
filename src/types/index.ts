@@ -26,5 +26,6 @@ export type {
   RootStackParamList,
   RootTabParamList,
   RouteName,
+  VaultStackParamList,
 } from './navigation';
 export * from './modules';

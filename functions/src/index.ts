@@ -7,7 +7,7 @@ const imagekit = new ImageKit({
   urlEndpoint: "https://ik.imagekit.io/okhxbviyq",
 });
 
-export const imageKitAuth = functions.https.onRequest((req, res) => {
+export const imageKitAuth = functions.https.onRequest((_req, res) => {
   try {
     const auth = imagekit.getAuthenticationParameters();
     res.status(200).json(auth);

@@ -5,7 +5,6 @@ import { useTheme } from '@/hooks';
 import type { Theme } from '@/types';
 
 import type { MasterDataOption } from '../types';
-import { getVaultIcon } from './vaultIconMap';
 
 interface VaultCategoryCardProps {
   option: MasterDataOption;
@@ -40,6 +39,11 @@ export const VaultCategoryCard: React.FC<VaultCategoryCardProps> = ({
       <Text style={styles.title} numberOfLines={1}>
         {option.name}
       </Text>
+      {typeof count === 'number' ? (
+        <View style={styles.countBadge}>
+          <Text style={styles.countText}>{count}</Text>
+        </View>
+      ) : null}
     </Pressable>
   );
 };

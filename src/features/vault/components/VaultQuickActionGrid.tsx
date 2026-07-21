@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { useTheme } from '@/hooks';
 import type { Theme } from '@/types';
@@ -9,10 +9,12 @@ import { getVaultIcon } from './vaultIconMap';
 
 interface VaultQuickActionGridProps {
   actions: VaultQuickAction[];
+  onPress?: (actionId: string) => void;
 }
 
 export const VaultQuickActionGrid: React.FC<VaultQuickActionGridProps> = ({
   actions,
+  onPress,
 }) => {
   const { theme } = useTheme();
   const styles = useMemo(() => createStyles(theme), [theme]);
@@ -23,10 +25,15 @@ export const VaultQuickActionGrid: React.FC<VaultQuickActionGridProps> = ({
         const Icon = getVaultIcon(action.icon);
 
         return (
-          <View key={action.id} style={styles.action}>
+          <Pressable
+            key={action.id}
+            accessibilityRole="button"
+            onPress={() => onPress?.(action.id)}
+            style={styles.action}
+          >
             <Icon size={22} color={theme.colors.primary} strokeWidth={2.4} />
             <Text style={styles.actionText}>{action.title}</Text>
-          </View>
+          </Pressable>
         );
       })}
     </View>

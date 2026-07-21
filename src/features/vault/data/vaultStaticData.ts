@@ -3,6 +3,18 @@ import type { VaultStaticData } from '../types';
 export const vaultStaticData: VaultStaticData = {
   storageUsedGb: 4.2,
   storageLimitGb: 10,
+  maintenanceAppliances: [
+    { id: 'air_conditioner', name: 'Air Conditioner', icon: 'Wrench' },
+    { id: 'refrigerator', name: 'Refrigerator', icon: 'Package' },
+    { id: 'tv', name: 'TV', icon: 'FileImage' },
+    { id: 'washing_machine', name: 'Washing Machine', icon: 'SprayCan' },
+    { id: 'vehicle', name: 'Vehicle', icon: 'Car' },
+    { id: 'laptop', name: 'Laptop', icon: 'Calculator' },
+    { id: 'water_purifier', name: 'Water Purifier', icon: 'Wifi' },
+    { id: 'microwave', name: 'Microwave', icon: 'Flame' },
+    { id: 'solar', name: 'Solar', icon: 'Shield' },
+    { id: 'other', name: 'Other', icon: 'Folder' },
+  ],
   financeSummary: {
     income: 320000,
     expenses: 74320,
