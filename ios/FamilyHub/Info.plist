@@ -35,8 +35,12 @@
 	</dict>
 	<key>NSCameraUsageDescription</key>
 <string>Camera access is required to scan family QR codes.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>We need location to share your current location in emergency situations</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>We need location to share your current location in emergency situations</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string></string>
+	<string>We need location to share your current location in emergency situations</string>
 	<key>RCTNewArchEnabled</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>

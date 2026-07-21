@@ -38,6 +38,18 @@ export type ModuleStackParamList = {
     inviteCode: string;
     size: number;
   };
+
+  Members: undefined;
+  Health: undefined;
+  Medicines: undefined;
+  Prescriptions: undefined;
+  Visits: undefined;
+  Expenses: undefined;
+  Announcements: undefined;
+  Emergency: undefined;
+  PublicVault: undefined;
+  Documents: undefined;
+  JoinRequests: undefined;
 };
 
 export type RootStackParamList = AppStackParamList &

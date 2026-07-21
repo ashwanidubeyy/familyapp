@@ -93,6 +93,12 @@ export const ModuleScaffold: React.FC<ModuleScaffoldProps> = ({
                   handleLogout();
                   return;
                 }
+
+                if (action.onPress) {
+                  action.onPress();
+                  return;
+                }
+
                 navigation.navigate("ModuleDetail", {
                   title: action.title,
                   summary: action.summary,

@@ -12,7 +12,12 @@
           "package_name": "com.familyhub"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "848210643315-o7o9p51c3it67h066dg3hflupoe7tf59.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyCQMeWXkG_QANWJRt5r2a7Fg8guOPSYu04"
@@ -20,7 +25,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "848210643315-o7o9p51c3it67h066dg3hflupoe7tf59.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "848210643315-l3ptt00tcknn39pi6ud7n7305ba4rrra.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.familyhub"
+              }
+            }
+          ]
         }
       }
     }

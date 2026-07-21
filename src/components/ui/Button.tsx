@@ -3,6 +3,7 @@ import {
   Pressable,
   StyleSheet,
   Text,
+  View,
   type PressableProps,
   type TextStyle,
   type ViewStyle,
@@ -19,6 +20,7 @@ interface ButtonProps extends Omit<PressableProps, 'style'> {
   size?: ButtonSize;
   style?: ViewStyle;
   textStyle?: TextStyle;
+  icon?: React.ReactNode;
 }
 
 export const Button: React.FC<ButtonProps> = ({
@@ -28,6 +30,7 @@ export const Button: React.FC<ButtonProps> = ({
   disabled,
   style,
   textStyle,
+  icon,
   ...props
 }) => {
   const { theme } = useTheme();
@@ -40,6 +43,8 @@ export const Button: React.FC<ButtonProps> = ({
           justifyContent: 'center',
           borderRadius: theme.borderRadius.md,
           opacity: disabled ? 0.6 : 1,
+          flexDirection: 'row',
+          gap: theme.spacing.sm,
         },
         sm: {
           paddingHorizontal: theme.spacing.md,
@@ -86,6 +91,7 @@ export const Button: React.FC<ButtonProps> = ({
       disabled={disabled}
       style={[styles.base, sizeStyle, variantStyle, style]}
       {...props}>
+      {icon}
       <Text style={[styles.text, labelStyle, textStyle]}>{title}</Text>
     </Pressable>
   );

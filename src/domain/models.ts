@@ -110,9 +110,13 @@ export interface VaultItem {
 }
 
 export interface EmergencyContact {
+  contactId: string;
   name: string;
   phone: string;
-  relation: string;
+  category: string;
+  address: string;
+  notes: string;
+  isSOSPerson: boolean;
 }
 
 export interface EmergencyInfo {

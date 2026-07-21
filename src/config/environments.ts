@@ -10,19 +10,19 @@ export interface EnvironmentConfig {
 export const environmentConfigs: Record<Environment, EnvironmentConfig> = {
   development: {
     environment: 'development',
-    apiUrl: 'https://dev-api.familyhub.com/v1',
+    apiUrl: 'http://localhost:3000',
     timeout: 30000,
     enableLogging: true,
   },
   staging: {
     environment: 'staging',
-    apiUrl: 'https://staging-api.familyhub.com/v1',
+    apiUrl: 'https://your-render-staging-url.onrender.com',
     timeout: 30000,
     enableLogging: true,
   },
   production: {
     environment: 'production',
-    apiUrl: 'https://api.familyhub.com/v1',
+    apiUrl: 'https://your-render-production-url.onrender.com',
     timeout: 15000,
     enableLogging: false,
   },

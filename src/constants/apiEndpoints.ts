@@ -15,4 +15,11 @@ export const API_ENDPOINTS = {
     DETAIL: (id: string) => `/family/${id}`,
     MEMBERS: (id: string) => `/family/${id}/members`,
   },
+  SOS: {
+    SEND: '/api/sos',
+    CANCEL: '/api/sos/cancel',
+  },
+  DEVICE: {
+    REGISTER: '/api/device/register',
+  },
 } as const;

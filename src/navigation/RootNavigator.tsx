@@ -1,5 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
-import { NavigationContainer } from "@react-navigation/native";
+import {
+  NavigationContainer,
+  createNavigationContainerRef,
+} from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -29,11 +32,38 @@ import type {
 import AppLockScreen from "@/features/auth/screens/AppLockScreen";
 import CustomTabBar from "./components/CustomTabBar";
 import { FamilyQRCodeScreen } from "@/features/profile/screens/FamilyQRCodeScreen";
+import {
+  FamilyMainScreen,
+  MembersScreen,
+  HealthScreen,
+  MedicinesScreen,
+  PrescriptionsScreen,
+  VisitsScreen,
+  ExpensesScreen,
+  AnnouncementsScreen,
+  EmergencyContactsScreen,
+  JoinRequestsScreen,
+} from "@/features/family";
 
 const Tab = createBottomTabNavigator<RootTabParamList>();
 const Stack = createNativeStackNavigator<ModuleStackParamList>();
 const RootStack = createNativeStackNavigator<AppStackParamList>();
 const AuthStack = createNativeStackNavigator<AuthStackParamList>();
+
+export const navigationRef = createNavigationContainerRef();
+
+export function navigateToSOSAlert(): void {
+  if (!navigationRef.isReady()) {
+    return;
+  }
+
+  (navigationRef as any).navigate("Dashboard", {
+    screen: "Family",
+    params: {
+      screen: "Emergency",
+    },
+  });
+}
 
 interface ModuleStackProps {
   component: React.ComponentType;
@@ -75,10 +105,75 @@ const VaultStack = createModuleStack({
   component: VaultScreen,
   title: "Vault",
 });
-const FamilyStack = createModuleStack({
-  component: FamilyScreen,
-  title: "Family",
-});
+
+// Custom Family Stack with all the new screens
+const FamilyStack: React.FC = () => {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen
+        name="ModuleHome"
+        component={FamilyMainScreen}
+        options={{ title: "Family", headerShown: false }}
+      />
+      <Stack.Screen
+        name="ModuleDetail"
+        component={ModuleDetailScreen}
+        options={({ route }) => ({ title: route.params.title })}
+      />
+      <Stack.Screen
+        name="FamilyQRCode"
+        component={FamilyQRCodeScreen}
+        options={{ title: "Family QR Code" }}
+      />
+      <Stack.Screen
+        name="Members"
+        component={MembersScreen}
+        options={{ title: "Members" }}
+      />
+      <Stack.Screen
+        name="Health"
+        component={HealthScreen}
+        options={{ title: "Health" }}
+      />
+      <Stack.Screen
+        name="Medicines"
+        component={MedicinesScreen}
+        options={{ title: "Medicines" }}
+      />
+      <Stack.Screen
+        name="Prescriptions"
+        component={PrescriptionsScreen}
+        options={{ title: "Prescriptions" }}
+      />
+      <Stack.Screen
+        name="Visits"
+        component={VisitsScreen}
+        options={{ title: "Doctor Visits" }}
+      />
+      <Stack.Screen
+        name="Expenses"
+        component={ExpensesScreen}
+        options={{ title: "Medical Expenses" }}
+      />
+      <Stack.Screen
+        name="Announcements"
+        component={AnnouncementsScreen}
+        options={{ title: "Announcements" }}
+      />
+      <Stack.Screen
+        name="Emergency"
+        component={EmergencyContactsScreen}
+        options={{ title: "Emergency Contacts" }}
+      />
+      <Stack.Screen
+        name="JoinRequests"
+        component={JoinRequestsScreen}
+        options={{ title: "Join Requests" }}
+      />
+    </Stack.Navigator>
+  );
+};
+
 const CalendarStack = createModuleStack({
   component: CalendarScreen,
   title: "Calendar",
@@ -178,7 +273,7 @@ export const RootNavigator: React.FC = () => {
   }
 
   return (
-    <NavigationContainer>
+    <NavigationContainer ref={navigationRef}>
       <RootStack.Navigator screenOptions={{ headerShown: false }}>
         {!user ? (
           // Not logged in

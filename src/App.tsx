@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { StatusBar } from 'react-native';
+import { StatusBar, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { initI18n } from '@/localization';
 import { useTheme } from '@/hooks';
 import { RootNavigator } from '@/navigation';
 import { ThemeProvider } from '@/theme';
-import { AuthProvider } from '@/features/auth';
+import { AuthProvider, useAuth } from '@/features/auth';
+import { SOSButton } from '@/components';
+import { NotificationProvider } from '@/notifications/NotificationProvider';
 
 const AppStatusBar: React.FC = () => {
   const { isDark } = useTheme();
@@ -16,12 +18,22 @@ const AppStatusBar: React.FC = () => {
   );
 };
 
-const AppContent: React.FC = () => {
+const AppContentWithSOS: React.FC = () => {
+  const { user } = useAuth();
+  const isUserAuthenticated = !!user && !!user.familyId;
+
   return (
-    <>
+    <View style={{ flex: 1 }}>
       <AppStatusBar />
       <RootNavigator />
-    </>
+      {isUserAuthenticated && <SOSButton />}
+    </View>
+  );
+};
+
+const AppContent: React.FC = () => {
+  return (
+    <AppContentWithSOS />
   );
 };
 
@@ -45,7 +57,9 @@ const App: React.FC = () => {
     <SafeAreaProvider>
       <ThemeProvider>
         <AuthProvider>
-          <AppContent />
+          <NotificationProvider>
+            <AppContent />
+          </NotificationProvider>
         </AuthProvider>
       </ThemeProvider>
     </SafeAreaProvider>
