@@ -1,6 +1,6 @@
-import express from 'express';
-import dotenv from 'dotenv';
-import sosRoutes from './routes/sos';
+import express, { Request, Response } from "express";
+import dotenv from "dotenv";
+import sosRoutes from "./routes/sos";
 
 // Load environment variables
 dotenv.config();
@@ -12,11 +12,11 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 
 // Routes
-app.use('/api', sosRoutes);
+app.use("/api", sosRoutes);
 
 // Health check endpoint
-app.get('/health', (req, res) => {
-  res.status(200).json({ status: 'ok' });
+app.get("/health", (_req: Request, res: Response) => {
+  res.status(200).json({ status: "ok" });
 });
 
 // Start server

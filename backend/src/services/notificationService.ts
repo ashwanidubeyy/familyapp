@@ -1,4 +1,5 @@
-import { db, messaging } from '../firebase';
+import * as admin from "firebase-admin";
+import { db, messaging } from "../firebase";
 
 export const sendSOSNotifications = async (
   familyId: string,
@@ -15,7 +16,7 @@ export const sendSOSNotifications = async (
 
   // Get device tokens for each family member
   for (const memberDoc of membersSnapshot.docs) {
-    const memberData = memberDoc.data();
+    const memberData = memberDoc.data() as any;
     const userId = memberData.userId;
 
     if (!userId) continue;
@@ -28,41 +29,43 @@ export const sendSOSNotifications = async (
       .collection(`users/${userId}/devices`)
       .get();
 
-    devicesSnapshot.docs.forEach((deviceDoc) => {
-      const deviceData = deviceDoc.data();
-      if (deviceData?.token) {
-        tokens.push(deviceData.token);
-      }
-    });
+    devicesSnapshot.docs.forEach(
+      (deviceDoc: admin.firestore.QueryDocumentSnapshot) => {
+        const deviceData = deviceDoc.data() as any;
+        if (deviceData?.token) {
+          tokens.push(deviceData.token);
+        }
+      },
+    );
   }
 
   if (tokens.length === 0) {
-    console.log('No tokens found to send SOS notification');
+    console.log("No tokens found to send SOS notification");
     return;
   }
 
   // Build notification payload
   const payload: admin.messaging.MulticastMessage = {
     notification: {
-      title: '🚨 SOS Alert!',
-      body: `${senderName || 'Someone'} needs help immediately!`,
+      title: "🚨 SOS Alert!",
+      body: `${senderName || "Someone"} needs help immediately!`,
     },
     data: {
-      type: 'SOS',
+      type: "SOS",
       familyId: familyId,
       alertId: alertId,
     },
     android: {
       notification: {
-        sound: 'default',
-        channelId: 'default',
-        priority: 'high',
+        sound: "default",
+        channelId: "default",
+        priority: "high",
       },
     },
     apns: {
       payload: {
         aps: {
-          sound: 'default',
+          sound: "default",
           badge: 1,
         },
       },
@@ -75,15 +78,17 @@ export const sendSOSNotifications = async (
     const response = await messaging.sendEachForMulticast(payload);
     console.log(`Successfully sent ${response.successCount} messages`);
     console.log(`Failed to send ${response.failureCount} messages`);
-    
+
     // Log failures if any
-    response.responses.forEach((res, index) => {
-      if (res.error) {
-        console.error(`Failed to send to token ${tokens[index]}:`, res.error);
-      }
-    });
+    response.responses.forEach(
+      (res: admin.messaging.SendResponse, index: number) => {
+        if (res.error) {
+          console.error(`Failed to send to token ${tokens[index]}:`, res.error);
+        }
+      },
+    );
   } catch (error) {
-    console.error('Error sending SOS notifications:', error);
+    console.error("Error sending SOS notifications:", error);
   }
 };
 
@@ -102,7 +107,7 @@ export const sendSOSCancelNotifications = async (
 
   // Get device tokens for each family member
   for (const memberDoc of membersSnapshot.docs) {
-    const memberData = memberDoc.data();
+    const memberData = memberDoc.data() as any;
     const userId = memberData.userId;
 
     if (!userId) continue;
@@ -115,40 +120,42 @@ export const sendSOSCancelNotifications = async (
       .collection(`users/${userId}/devices`)
       .get();
 
-    devicesSnapshot.docs.forEach((deviceDoc) => {
-      const deviceData = deviceDoc.data();
-      if (deviceData?.token) {
-        tokens.push(deviceData.token);
-      }
-    });
+    devicesSnapshot.docs.forEach(
+      (deviceDoc: admin.firestore.QueryDocumentSnapshot) => {
+        const deviceData = deviceDoc.data() as any;
+        if (deviceData?.token) {
+          tokens.push(deviceData.token);
+        }
+      },
+    );
   }
 
   if (tokens.length === 0) {
-    console.log('No tokens found to send SOS cancel notification');
+    console.log("No tokens found to send SOS cancel notification");
     return;
   }
 
   // Build notification payload
   const payload: admin.messaging.MulticastMessage = {
     notification: {
-      title: '✅ SOS Cancelled',
-      body: `${senderName || 'Someone'} is safe now!`,
+      title: "✅ SOS Cancelled",
+      body: `${senderName || "Someone"} is safe now!`,
     },
     data: {
-      type: 'SOS_CANCEL',
+      type: "SOS_CANCEL",
       familyId: familyId,
       alertId: alertId,
     },
     android: {
       notification: {
-        sound: 'default',
-        channelId: 'default',
+        sound: "default",
+        channelId: "default",
       },
     },
     apns: {
       payload: {
         aps: {
-          sound: 'default',
+          sound: "default",
         },
       },
     },
@@ -160,14 +167,16 @@ export const sendSOSCancelNotifications = async (
     const response = await messaging.sendEachForMulticast(payload);
     console.log(`Successfully sent ${response.successCount} messages`);
     console.log(`Failed to send ${response.failureCount} messages`);
-    
+
     // Log failures if any
-    response.responses.forEach((res, index) => {
-      if (res.error) {
-        console.error(`Failed to send to token ${tokens[index]}:`, res.error);
-      }
-    });
+    response.responses.forEach(
+      (res: admin.messaging.SendResponse, index: number) => {
+        if (res.error) {
+          console.error(`Failed to send to token ${tokens[index]}:`, res.error);
+        }
+      },
+    );
   } catch (error) {
-    console.error('Error sending SOS cancel notifications:', error);
+    console.error("Error sending SOS cancel notifications:", error);
   }
 };

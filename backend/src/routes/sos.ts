@@ -1,66 +1,53 @@
-import express from "express";
-import { auth, db } from "../firebase";
-import {
-  sendSOSNotifications,
-  sendSOSCancelNotifications,
-} from "../services/notificationService";
+import express, { Request, Response, NextFunction } from 'express';
+import { auth, db } from '../firebase';
+import { sendSOSNotifications, sendSOSCancelNotifications } from '../services/notificationService';
 
 const router = express.Router();
 
 // Middleware to verify Firebase ID token
-const verifyToken = async (
-  req: express.Request,
-  res: express.Response,
-  next: express.NextFunction,
-) => {
+const verifyToken = async (req: Request, res: Response, next: NextFunction) => {
   const authHeader = req.headers.authorization;
-
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    return res
-      .status(401)
-      .json({ success: false, message: "Unauthorized - No token provided" });
+  
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({ success: false, message: 'Unauthorized - No token provided' });
   }
-
-  const idToken = authHeader.split("Bearer ")[1];
-
+  
+  const idToken = authHeader.split('Bearer ')[1];
+  
   try {
     const decodedToken = await auth.verifyIdToken(idToken);
-    req.user = decodedToken;
+    (req as any).user = decodedToken;
     next();
   } catch (error) {
-    console.error("Error verifying token:", error);
-    return res
-      .status(401)
-      .json({ success: false, message: "Unauthorized - Invalid token" });
+    console.error('Error verifying token:', error);
+    return res.status(401).json({ success: false, message: 'Unauthorized - Invalid token' });
   }
 };
 
 // POST /api/sos
-router.post("/sos", verifyToken, async (req, res) => {
+router.post('/sos', verifyToken, async (req: Request, res: Response) => {
   try {
     const { familyId, latitude, longitude, message } = req.body;
-    const userId = req.user?.uid;
-
+    const userId = (req as any).user?.uid;
+    
     if (!userId) {
-      return res.status(401).json({ success: false, message: "Unauthorized" });
+      return res.status(401).json({ success: false, message: 'Unauthorized' });
     }
-
+    
     // Validate required fields
     if (!familyId) {
-      return res
-        .status(400)
-        .json({ success: false, message: "familyId is required" });
+      return res.status(400).json({ success: false, message: 'familyId is required' });
     }
-
+    
     // Get sender's name
-    const userDoc = await db.collection("users").doc(userId).get();
+    const userDoc = await db.collection('users').doc(userId).get();
     const senderName = userDoc.data()?.displayName || userDoc.data()?.name;
-
+    
     // Get emergency contacts from firestore
     const contactsSnapshot = await db
-      .collection("families")
+      .collection('families')
       .doc(familyId)
-      .collection("emergencyContacts")
+      .collection('emergencyContacts')
       .get();
 
     const emergencyContacts = contactsSnapshot.docs.map((doc) => ({
@@ -68,134 +55,112 @@ router.post("/sos", verifyToken, async (req, res) => {
       phone: doc.data()?.phone,
       category: doc.data()?.category,
     }));
-
+    
     // Create SOS alert document in firestore
     const sosAlertData = {
       familyId,
       senderId: userId,
       senderName,
       location: latitude && longitude ? { latitude, longitude } : undefined,
-      message: message || "EMERGENCY! Please help immediately!",
-      status: "ACTIVE",
+      message: message || 'EMERGENCY! Please help immediately!',
+      status: 'ACTIVE',
       createdAt: new Date(),
       emergencyContacts,
     };
-
+    
     const sosAlertRef = await db
-      .collection("families")
+      .collection('families')
       .doc(familyId)
-      .collection("sosAlerts")
+      .collection('sosAlerts')
       .add(sosAlertData);
-
+    
     // Send notifications
     await sendSOSNotifications(familyId, userId, senderName, sosAlertRef.id);
-
+    
     return res.status(200).json({
       success: true,
       data: { alertId: sosAlertRef.id },
-      message: "SOS sent successfully",
+      message: 'SOS sent successfully',
     });
   } catch (error) {
-    console.error("Error processing SOS:", error);
-    return res
-      .status(500)
-      .json({ success: false, message: "Internal server error" });
+    console.error('Error processing SOS:', error);
+    return res.status(500).json({ success: false, message: 'Internal server error' });
   }
 });
 
 // POST /api/device/register
-router.post("/device/register", verifyToken, async (req, res) => {
+router.post('/device/register', verifyToken, async (req: Request, res: Response) => {
   try {
     const { token, platform } = req.body;
-    const userId = req.user?.uid;
-
+    const userId = (req as any).user?.uid;
+    
     if (!userId) {
-      return res.status(401).json({ success: false, message: "Unauthorized" });
+      return res.status(401).json({ success: false, message: 'Unauthorized' });
     }
-
+    
     if (!token) {
-      return res
-        .status(400)
-        .json({ success: false, message: "token is required" });
+      return res.status(400).json({ success: false, message: 'token is required' });
     }
-
+    
     // Store device token in Firestore
     const deviceData = {
       token,
-      platform: platform || "unknown",
+      platform: platform || 'unknown',
       createdAt: new Date(),
     };
-
+    
     // Create a document with a unique ID (we can use the token as the ID)
     const deviceId = token.substring(0, 20); // Shorten token for document ID
     await db
-      .collection("users")
+      .collection('users')
       .doc(userId)
-      .collection("devices")
+      .collection('devices')
       .doc(deviceId)
       .set(deviceData, { merge: true });
-
-    return res
-      .status(200)
-      .json({
-        success: true,
-        data: null,
-        message: "Device registered successfully",
-      });
+    
+    return res.status(200).json({ success: true, data: null, message: 'Device registered successfully' });
   } catch (error) {
-    console.error("Error registering device:", error);
-    return res
-      .status(500)
-      .json({ success: false, message: "Internal server error" });
+    console.error('Error registering device:', error);
+    return res.status(500).json({ success: false, message: 'Internal server error' });
   }
 });
 
 // POST /api/sos/cancel
-router.post("/sos/cancel", verifyToken, async (req, res) => {
+router.post('/sos/cancel', verifyToken, async (req: Request, res: Response) => {
   try {
     const { familyId, alertId } = req.body;
-    const userId = req.user?.uid;
-
+    const userId = (req as any).user?.uid;
+    
     if (!userId) {
-      return res.status(401).json({ success: false, message: "Unauthorized" });
+      return res.status(401).json({ success: false, message: 'Unauthorized' });
     }
-
+    
     if (!familyId || !alertId) {
-      return res
-        .status(400)
-        .json({ success: false, message: "familyId and alertId are required" });
+      return res.status(400).json({ success: false, message: 'familyId and alertId are required' });
     }
-
+    
     // Get sender's name
-    const userDoc = await db.collection("users").doc(userId).get();
+    const userDoc = await db.collection('users').doc(userId).get();
     const senderName = userDoc.data()?.displayName || userDoc.data()?.name;
-
+    
     // Update SOS alert status to RESOLVED
     await db
-      .collection("families")
+      .collection('families')
       .doc(familyId)
-      .collection("sosAlerts")
+      .collection('sosAlerts')
       .doc(alertId)
       .update({
-        status: "RESOLVED",
+        status: 'RESOLVED',
         resolvedAt: new Date(),
       });
-
+    
     // Send cancel notifications
     await sendSOSCancelNotifications(familyId, userId, senderName, alertId);
-
-    return res
-      .status(200)
-      .json({
-        success: true,
-        data: null,
-        message: "SOS canceled successfully",
-      });
+    
+    return res.status(200).json({ success: true, data: null, message: 'SOS cancelled successfully' });
   } catch (error) {
-    console.error("Error canceling SOS:", error);
-    return res
-      .status(500)
-      .json({ success: false, message: "Internal server error" });
+    console.error('Error canceling SOS:', error);
+    return res.status(500).json({ success: false, message: 'Internal server error' });
   }
 });
 
